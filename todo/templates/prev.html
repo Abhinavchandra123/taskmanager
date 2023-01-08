@@ -1,0 +1,396 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+{%load static%}
+<!-- common page for operation and strategy -->
+<script type='text/javascript'>
+  if(!window.location.hash) {
+    window.location = window.location + '#loaded';
+    window.location.reload();}
+</script>
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- partial -->
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            {% if stg %}
+            <h4 class="card-title">Strategy Details</h4>
+            {%endif%}
+            {% if op %}
+            <h4 class="card-title">Operation Details</h4>
+            {%endif%}
+            <table class="table table-borderless mb-2">
+              {% if stg %}
+              <form id="post-form" class="forms-sample" method="POST">
+              {% csrf_token%}
+              <tbody>
+                <tr>
+                  <td class="d-none"><input onchange="this.form.submit()" type="text" class="form-control d-none" name="id" value='{{stg.id}}' id="id" placeholder="id"></td>
+                  <td>S ID :<input onchange="this.form.submit()" type="text" class="form-control" name="sid" value='{{stg.sid}}' id="sid" placeholder="Strategy id"></td>
+                  <td>Meeting Date :<input onchange="this.form.submit()" type="date" class="form-control" name="date" value='{{stg.sdate}}' id="date"></td>
+                  <td>Start Time :<input onchange="this.form.submit()" type="time" class="form-control" value='{{stg.stime}}' name="stime" id="stime"></td>
+                </tr>
+                <tr>
+                  <td>End Time :<input onchange="this.form.submit()" type="time" class="form-control" value='{{stg.etime}}' name="etime" id="etime"></td>
+                  <td>Location :<input onchange="this.form.submit()" type="text" class="form-control" value='{{stg.location}}' name="location" id="location" ></td>
+                  <td><textarea class="form-control" aria-controls="true" name="" id="" cols="35" rows="3" readonly>{{th.desce}}</textarea></td>
+                </tr>
+              </tbody>
+              </form>
+              {%endif%}
+              {% if op %}
+              <form id="post-form" class="forms-sample" method="POST">
+              {% csrf_token%}
+              <tbody>
+                <tr>
+                  <td class="d-none"><input onchange="this.form.submit()" type="text" class="form-control d-none" name="id" value='{{op.id}}' id="id" placeholder="id"></td>
+                  <td>P ID :<input onchange="this.form.submit()" type="text" class="form-control" name="pid" value='{{op.pid}}' id="pid" ></td>
+                  <td>Meeting Date :<input onchange="this.form.submit()" type="date" class="form-control" name="date" value='{{op.sdate}}' id="date"></td>
+                  <td>Start Time :<input onchange="this.form.submit()" type="time" class="form-control" value='{{op.stime}}' name="stime" id="stime"></td>
+                </tr>
+                <tr>
+                  <td>End Time :<input onchange="this.form.submit()" type="time" class="form-control" value='{{op.etime}}' name="etime" id="etime"></td>
+                  <td>Location :<input onchange="this.form.submit()" type="text" class="form-control" value='{{op.location}}' name="location" id="location" ></td>
+                  <td><textarea class="form-control" aria-controls="true" cols="35" rows="3" readonly>{{th.desce}}</textarea></td>
+                </tr>
+              </tbody>
+              </form>
+              {%endif%}
+            </table>
+
+            <div>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    {% if stg %}
+                    <th>Total</th>
+                    {%endif%}
+                    {% if op %}
+                    <th>Pending</th>
+                    {%endif%}
+                    <th>Add new</th>
+                    <th>View Details</th>
+                  </tr>
+                </thead>
+                {% for i in emp%}
+                <tbody>
+                  <tr>
+                    <td>{{i.id}}</td>
+                    <td>{{i.name}}</td>
+                    {% if op %}
+                    <td>{{i.progress}}</td>
+                    <td><a class="btn btn-outline-info" href="{%url 'emplop' i.id %}?pid={{op.id}}"><i class="ti-pencil-alt"></i> Add new </a></td>
+                    <td><a class="btn btn-outline-primary" href="{% url 'rep' i.id%}?pid={{op.id}}">View Details</a></td>
+                    {%endif%}
+                    {% if stg %}
+                    <td>{{i.tempc}}</td>
+                    <td><a class="btn btn-outline-info" href="{%url 'emplst' i.id %}?sid={{stg.id}}"><i class="ti-pencil-alt"></i> Add new </a></td>
+                    <td><a class="btn btn-outline-primary" href="{% url 'rep' i.id%}?sid={{stg.id}}">View Details</a></td>
+                    {%endif%}
+                  </tr>
+                </tbody>
+                {%endfor%}
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endblock%}
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+          href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.
+        All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+          class="ti-heart text-danger ml-1"></i></span>
+    </div>
+  </footer>
+  <!-- partial -->
+</div>
+    <!-- partial -->
+<!-- <div id="collapseOneq{{emp.id}}" class="collapse show" aria-labelledby="headingOneq{{emp.id}}"
+    data-parent="#accordionExample">
+    <div class="card-body">
+        <h3 class="p-3">New Tasks</h3>
+        <table class="table css-serial">
+            <thead>
+                <tr class="border">
+                    <th scope="col">#</th>
+                    <th scope="col">Start date</th>
+                    <th scope="col">Actual<br> Complete Date</th>
+                    <th scope="col">Job Name</th>
+                    <th scope="col">Task</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Reference</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="border">
+                {%for jobtd in jobtds%}
+                <tr>
+                    <td scope="row"></td>
+                    <td>{{jobtd.sdate}}</td>
+                    <form method="POST" id="post-form{{emp.id}}">
+                        {% csrf_token %}
+                        <input type="text" id="user" name="user" class="d-none" value="{{jobtd.id}}">
+                        <td>{{jobtd.enddate}}</td>
+                        <td><input class="form-control" type="text" id="job" name="job" placeholder="Job name"
+                                value="{{jobtd.jobname}}" required></td>
+                        <td><input class="form-control" type="text" id="task" name="task" placeholder="Job name"
+                                value="{{jobtd.task}}" required></td>
+                        <td><select class="form-control" id="status" name="status">
+                                <option value="{{jobtd.status}}">{{jobtd.status}}</option>
+                                <option class="text-success" value="Completed">Completed</option>
+                            </select>
+                        </td>
+                        <td><input class="form-control" type="text" id="remark" name="remark" value="{{jobtd.remark}}"></td>
+                        <input type="submit" id="new" name="new" value="new" > -->
+                        <!-- <td><button type="submit" id="new" name="new"  value="new" class="btn btn-success">Update</button></td>
+                    </form>
+                </tr>
+                {%endfor%}
+            </tbody>
+            <script type="text/javascript">
+                $(document).on('submit','#post-form{{emp.id}}',function(e){
+
+                  $.ajax({
+                    type:"POST",
+                    url:'',
+                    data:{
+                      user:$('#user').val(),
+                      job:$('#job').val(),
+                      task:$('#task').val(),
+                      status:$('#status').val(),
+                      remark:$('#remark').val(),
+                      new:$('#new').val(),
+
+                      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+
+                    },
+                    success:function(data){
+                      alert('data updated')
+                      window.location.reload();
+                    }
+                  });
+                });
+              </script>
+        </table>
+    </div>
+</div>
+
+<div id="collapseOneOld" class="collapse" aria-labelledby="headingOneOld"
+    data-parent="#accordionExample">
+    <div class="card-body">
+        <h3 class="p-3">Not Completed Task</h3>
+        <table class="table border-0 css-serial">
+            <thead>
+                <tr class="border">
+                    <th scope="col">#</th>
+                    <th scope="col">Start date</th>
+                    <th scope="col">Actual<br> Complete Date</th>
+                    <th scope="col">Job Name</th>
+                    <th scope="col">Task</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Remarks</th>
+
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+
+            <tbody class="border">
+                {% for job in jobs %}
+                {% if job.sdate != sdate%}
+                <tr>
+                    <td></td>
+                    <td>
+                        <p>{{job.sdate}}</p>
+                    </td>
+                    <form method="POST" id="not-comp{{emp.id}}">
+                        {% csrf_token %}
+                        <input type="text" id="user" name="user" class="d-none" value="{{job.id}}">
+                        <td>{{job.enddate}}</td>
+                        <td><input class="form-control" type="text" id="job" name="job" placeholder="Job name"
+                                value="{{job.jobname}}" required></td>
+                        <td><input class="form-control" type="text" id="task" name="task" placeholder="Job name"
+                                value="{{job.task}}" required></td>
+                        <td><select class="form-control" id="status" name="status">
+                                <option value="{{job.status}}">{{job.status}}</option>
+
+                                <option class="text-success" value="Completed">Completed</option>
+                            </select>
+                        </td>
+                        <td><input class="form-control" type="text" id="remark" name="remark" value="{{job.remark}}"></td>
+
+                        <td><button type="submit" id="old" name="old" value="true" class="btn btn-success">Update Status</button>
+                        </td>
+                    </form>
+                </tr>
+                {%endif%}
+                {%endfor%}
+            </tbody>
+            <script type="text/javascript">
+                $(document).on('submit','#not-comp{{emp.id}}',function(e){
+
+                  $.ajax({
+                    type:"POST",
+                    url:'',
+                    data:{
+                      user:$('#user').val(),
+                      job:$('#job').val(),
+                      task:$('#task').val(),
+                      status:$('#status').val(),
+                      remark:$('#remark').val(),
+                      old:$('#old').val(),
+
+                      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+
+                    },
+                    success:function(data){
+                      alert('data updated')
+                      window.location.reload();
+                    }
+                  });
+                });
+              </script>
+
+        </table>
+    </div>
+</div>
+<div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+    data-parent="#accordionExample">
+    <div class="card-body">
+        <h3 class="p-3">Completed Task</h3>
+        <table class="table border-0 css-serial">
+            <thead>
+                <tr class="border">
+                    <th scope="col">#</th>
+                    <th scope="col">Start date</th>
+                    <th scope="col">Actual<br> Complete Date</th>
+                    <th scope="col">Job Name</th>
+                    <th scope="col">Task</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Remarks</th>
+                </tr>
+            </thead>
+
+            <tbody class="border">
+                {% for job in jobss %}
+                <tr>
+                    <td></td>
+                    <td>
+                        <p>{{job.sdate}}</p>
+                    </td>
+                        <td>{{job.enddate}}</td>
+                        <td>{{job.jobname}}</td>
+                        <td>{{job.task}}</td>
+                        <td>{{job.status}}</td>
+                        <td>{{job.remark}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+
+        </table>
+    </div>
+</div> -->
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title"> Strategy Meating</h4>
+    <form id="post-form" class="forms-sample" method="POST">
+      {% csrf_token%}
+      <div class="form-group">
+        <label for="">id</label>
+        <input type="number" class="form-control" name="id" id="id" placeholder="Id">
+      </div>
+      <div class="form-group">
+        <label for="">S_id</label>
+        <input type="text" class="form-control" name="sid" id="sid" placeholder="Strategy id">
+      </div>
+      <div class="form-group">
+        <label for="">Meeting Date</label>
+        <input type="date" class="form-control" name="date" id="date">
+      </div>
+      <div class="form-group">
+        <label for="">Start time</label>
+        <input type="time" class="form-control" name="stime" id="stime">
+      </div>
+      <div class="form-group">
+        <label for="">End time</label>
+        <input type="time" class="form-control" name="etime" id="etime" >
+      </div>
+      <div class="form-group">
+          <label for="">Location</label>
+          <input type="text" class="form-control" name="location" id="location" placeholder="Meeting location" >
+      </div>
+      <button type="submit" class="btn btn-primary mr-2">Save to Thoughts</button>
+    </form>
+    <script type="text/javascript">
+      $(document).on('submit', '#post-formfgf', function (e) {
+          e.preventDefault();
+          $.ajax({
+            type: "POST",
+            url: '',
+            data: {
+              sid: $('#sid').val(),
+              date: $('#date').val(),
+              stime: $('#stime').val(),
+              etime: $('#stime').val(),
+              location: $('#location').val(),
+
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+            },
+          success: function () {
+            alert('data updated')
+
+          }
+        });
+      });
+    </script>
+  </div>
+</div>

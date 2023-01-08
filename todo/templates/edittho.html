@@ -1,0 +1,145 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+{%load static%}
+<style>
+    .css-serial {
+        counter-reset: serial-number;
+        /* Set the serial number counter to 0 */
+    }
+
+    .css-serial td:first-child:before {
+        counter-increment: serial-number;
+        /* Increment the serial number counter */
+        content: counter(serial-number);
+        /* Display the counter */
+    }
+</style>
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'ind' %}">
+                <i class="mdi mdi-home-variant  menu-icon"></i>
+                <span class="menu-title">Home</span>
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-layout menu-icon"></i>
+                <span class="menu-title">Masters</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-layout menu-icon"></i>
+                <span class="menu-title">Meetings</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic1">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</nav>
+<div class="main-panel">
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+
+            <div class="content-wrapper d-flex align-items-center auth px-0">
+                <div class="row w-100 mx-0">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                            <div class="brand-logo d-flex justify-content-center">
+
+                            </div>
+                            <h4>Edit Employee Profile</h4>
+                            <h6 class="font-weight-light">Fill required fields</h6>
+                            <form id="post-form" class="forms-sample" method="POST" enctype="multipart/form-data">
+                                {% csrf_token%}
+                                <div class="form-group">
+                                  <label for="">Add Date</label>
+                                  <input type="date" class="form-control" name="date" id="date" value="{{bks.date}}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="">Add English text</label>
+                                  <input type="text" class="form-control" name="english" id="english" value="{{bks.desce}}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="">Type</label>
+                                  <input type="text" class="form-control" name="types" id="types" value="{{bks.typ}}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="">Add Malayalam text</label>
+                                  <input type="text" class="form-control" name="malayalam" id="malayalam" value="{{bks.descm}}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="">Add picture</label>
+                                  <input type="file" class="form-control file-upload-browse" name="image" id="image">
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <a href="{% url 'thought' %}" class="btn btn-secondary" >Back</a>
+                                <button type="submit" name="button" value="add" class="btn btn-primary">+ Add</button>
+                              </div>
+                              </div>
+                              </form>
+                              <script type="text/javascript">
+                                $(document).on('submit', '#post-form', function (e) {
+
+                                  var photo = document.getElementById("upfile");
+                                    var file = photo.files[0];
+                                    $.ajax({
+                                      type: "POST",
+                                      url: '',
+                                      data: {
+                                        date: $('#date').val(),
+                                        types: $('#types').val(),
+                                        english: $('#english').val(),
+                                        malayalam: $('#malayalam').val(),
+                                        image: $('#image').val(),
+
+                                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+                                      },
+                                    success: function () {
+                                      alert('data updated')
+                                      window.location.reload();
+                                    }
+                                  });
+                                });
+                              </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    {%endblock mainpanel%}
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+                    href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from
+                BootstrapDash.
+                All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+                    class="ti-heart text-danger ml-1"></i></span>
+        </div>
+    </footer>
+    <!-- partial -->
+</div>

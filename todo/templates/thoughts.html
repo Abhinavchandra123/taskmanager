@@ -1,0 +1,185 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+{%load static%}
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- partial -->
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <form method="POST" id="post-del">
+        {% csrf_token%}
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Thoughts</h4>
+              <div class="d-flex justify-content-end"><a data-toggle="modal" data-target="#exampleModalCenter" href=""
+                  class="btn btn-success">+ Add new Thought</a>
+                <button class="btn btn-danger ml-2" name="button" value="del" type="submit">- Delete selected
+                  Thoughts</a>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>Thought</th>
+                      <th>Edit</th>
+                      <th>Select</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for th in th%}
+                    <tr>
+                      <td><img src="{{ th.img.url}}" alt=""></td>
+                      <td>{{th.date}}</td>
+                      <td>{{th.typ}}</td>
+                      <td style="white-space: normal;">
+                        <textarea aria-controls="true" name="" id="" cols="70" rows="3" readonly>{{th.desce}}</textarea>
+                        <textarea aria-controls="true" name="" id="" cols="70" rows="3" readonly>{{th.descm}}</textarea>
+                      </td>
+                      <td><a class="btn btn-outline-info" href="{% url 'edittho' th.id %}"><i class="ti-pencil-alt"></i>
+                          Edit</a></td>
+                      <td>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" id="check" name="check"
+                              value="{{th.id}}">Select
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <script type="text/javascript">
+        $(document).on('submit', '#post-del', function (e) {
+          $.ajax({
+            success: function () {
+              window.location.reload();
+              alert('thoughts deleted')
+            }
+          });
+        });
+      </script>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="border-radius: 20px;">
+        <form id="post-form" class="forms-sample" method="POST" enctype="multipart/form-data">
+          {% csrf_token%}
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="">Add Date</label>
+              <input type="date" class="form-control" name="date" id="date" placeholder="Enter Date">
+            </div>
+            <div class="form-group">
+              <label for="">Add English text</label>
+              <input type="text" class="form-control" name="english" id="english" placeholder="English">
+            </div>
+            <div class="form-group">
+              <label for="">Type</label>
+              <input type="text" class="form-control" name="types" id="types" placeholder="Type of message">
+            </div>
+            <div class="form-group">
+              <label for="">Add Malayalam text</label>
+              <input type="text" class="form-control" name="malayalam" id="malayalam" placeholder="Malayalam">
+            </div>
+            <div class="form-group">
+              <label for="">Add picture</label>
+              <input type="file" class="form-control file-upload-browse" name="image" id="image">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" name="button" id="button" value="add" class="btn btn-primary">+ Add</button>
+        </div>
+      </form>
+      </div>
+      <script type="text/javascript">
+        $(document).on('submit', '#post-form', function (e) {
+
+          var photo = document.getElementById("upfile");
+          var file = photo.files[0];
+          $.ajax({
+            type: "POST",
+            url: '',
+            data: {
+              date: $('#date').val(),
+              types: $('#types').val(),
+              english: $('#english').val(),
+              malayalam: $('#malayalam').val(),
+              image: $('#image').val(),
+              button: $('#button').val(),
+
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+            },
+            success: function () {
+              alert('data updated')
+              window.location.reload();
+            }
+          });
+        });
+      </script>
+    </div>
+  </div>
+  {%endblock mainpanel%}
+  <!-- Modal -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+          href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.
+        All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+          class="ti-heart text-danger ml-1"></i></span>
+    </div>
+  </footer>
+</div>
+<!-- partial -->

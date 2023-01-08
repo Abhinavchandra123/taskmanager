@@ -1,0 +1,148 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+<style>
+  .css-serial {
+    counter-reset: serial-number;
+    /* Set the serial number counter to 0 */
+  }
+  .css-serial td:first-child:before {
+    counter-increment: serial-number;
+    /* Increment the serial number counter */
+    content: counter(serial-number);
+    /* Display the counter */
+  }
+</style>
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- partial -->
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Branches</h4>
+            <form method="post" class="forms-sample">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="">Add Branch</label>
+                <input type="text" class="form-control" id="" name="branch" placeholder="New branch name">
+              </div>
+              <button type="submit" name="button1" value="branch" class="btn btn-primary mr-2">Save to branches</button>
+
+            </form>
+            <h4 class="mt-4">Added Branches</h4>
+            <form method="POST">
+              {% csrf_token %}
+            {%for emp in bran %}
+              <label class="btn btn-outline-primary">{{emp.branch}}</label><input type="checkbox" id="check" name="check" value="{{emp.id}}" class="form-check-input">
+            {%endfor%}
+
+          </div>
+          <button type="submit" name="button1" value="delbr" class="btn btn-danger ml-2">-Delete selection</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Departments</h4>
+            <form  method="POST"  class="forms-sample">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="">Add Branch</label>
+                <input type="text" class="form-control" id="" name="dep" placeholder="New Department name">
+              </div>
+              <button type="submit" name="button1" value="depart" class="btn btn-primary mr-2">Save to Departments</button>
+            </form>
+            <form method="post" class="forms-sample">
+              {% csrf_token %}
+            <h4 class="mt-4">Added Departments</h4>
+            {%for emp in dep %}
+              <label class="btn btn-outline-primary">{{emp.department}}</label><input type="checkbox" id="check" name="check" value="{{emp.id}}" class="form-check-input">
+            {%endfor%}
+          </div>
+          <button type="submit" name="button1" value="deldep" class="btn btn-danger ml-2">-Delete selection</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Work Status</h4>
+        <form  method="POST"  class="forms-sample">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="">Add Status</label>
+            <input type="text" class="form-control" id="" name="status" placeholder="New Department name">
+          </div>
+          <button type="submit" name="button1" value="status" class="btn btn-primary mr-2">Save to WorkStatus</button>
+        </form>
+        <form method="post" class="forms-sample">
+          {% csrf_token %}
+        <h4 class="mt-4">Added Work status</h4>
+        {%for emp in est %}
+          <label class="btn btn-outline-primary">{{emp.status}}</label><input type="checkbox" id="check" name="check" value="{{emp.id}}" class="form-check-input">
+        {%endfor%}
+      </div>
+      <button type="submit" name="button1" value="delma" class="btn btn-danger ml-2">-Delete selection</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+    </div>
+  </div
+{%endblock%}
+
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2022.
+        All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center mr-5">Hand-crafted & made with <i
+          class="ti-heart text-danger ml-1"></i><a target="_blank" href="https://instadesign.in">
+          Instadesign</a></span>
+    </div>
+  </footer>
+  <!-- partial -->
+</div>
+<!-- main-panel ends -->

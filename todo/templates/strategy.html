@@ -1,0 +1,152 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+{%load static%}
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- partial -->
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Strategy</h4>
+            <form method="POST">
+              {% csrf_token %}
+            <div class="d-flex justify-content-end"><a href="" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-success">+ Add new Strategy</a>
+              <button type="submit" name="button1" value="del" class="btn btn-danger ml-2">- Delete selected Strategy</button></div>
+            <!-- <p class="card-description">
+              Add class <code >.table</code>
+            </p> -->
+            <div>
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content" style="border-radius: 20px;">
+                    <form id="post-form" class="forms-sample" method="POST">
+                      {% csrf_token%}
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="">S_id</label>
+                          <input type="text" class="form-control" name="sid" id="sid" value="{{ln}}">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Meeting Date</label>
+                          <input type="date" class="form-control" name="date" id="date">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Start time</label>
+                          <input type="time" class="form-control" name="stime" id="stime">
+                        </div>
+                        <div class="form-group">
+                          <label for="">End time</label>
+                          <input type="time" class="form-control" name="etime" id="etime" >
+                        </div>
+                        <div class="form-group">
+                            <label for="">Location</label>
+                            <input type="text" class="form-control" name="location" id="location" placeholder="Meeting location" >
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" name="button1" value="add" class="btn btn-primary">Save and Add Task</button>
+                    </div>
+                  </form>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal -->
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>SID No</th>
+                    <th>Meeting date</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Meeting Location</th>
+                    <th>Edit</th>
+                    <th>Select</th>
+                  </tr>
+                </thead>
+                {%if stg %}
+                {% for i in stg %}
+                <tbody>
+                  <tr>
+                    <td>{{i.id}}</td>
+                    <td>{{i.sid}}</td>
+                    <td>{{i.sdate}}</td>
+                    <td>{{i.stime}}</td>
+                    <td>{{i.etime}}</td>
+                    <td>{{i.location}}</td>
+                    <td><a class="btn btn-outline-info" href="{% url 'addstg' i.id %}"><i class="ti-pencil-alt"></i> Edit</a></td>
+                    <td>
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" id="check" name="check" value="{{i.id}}" class="form-check-input">
+                          Select
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                {% endfor %}
+                {%endif%}
+              </table>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endblock mainpanel%}
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+          href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.
+        All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+          class="ti-heart text-danger ml-1"></i></span>
+    </div>
+  </footer>
+  <!-- partial -->
+</div>

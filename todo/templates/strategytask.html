@@ -1,0 +1,325 @@
+{%extends 'index.html'%}
+{%block mainpanel%}
+{%load static%}
+<!-- <script type='text/javascript'>
+  if(!window.location.hash) {
+    window.location = window.location + '#loaded';
+    window.location.reload();}
+</script> -->
+<!-- common page for strategy and operations -->
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- partial -->
+<div class="main-panel">
+    <div class="content-wrapper">
+
+      <div class="row">
+
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+
+              {% if stg %}
+              <h4 class="card-title">Single Strategy Details</h4>
+              {% endif %}
+              {% if op %}
+              <h4 class="card-title">Operations Details</h4>
+              {% endif %}
+              <table class="table table-borderless mb-2">
+                <tbody>
+                  <tr>
+                    <td>Name :{{emp.name}} </td>
+                    <td>ID :{{emp.id}}</td>
+                    {% if stg %}
+                    <td>S ID :{{stg.sid}}</td>
+                    <td><a href="" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-success">+ Add new Strategy</a></td>
+                    {% endif %}
+                    {% if op %}
+                    <td>P ID :{{op.pid}}</td>
+                    <form method="POST" id="post-s">
+                      {% csrf_token %}
+                      <input class="d-none" type="text" value="status" name="button1">
+                    <td><select  onchange="this.form.submit()" class="form-control" id="status" name="status">
+                      {% if emp.status == None %}
+                      <option class="text-success">Select</option>
+                      {%endif%}
+                      {% if emp.status != None %}
+                      <option class="text-success" value="{{emp.status_id}}">{{emp.status}}</option>
+                      {%endif%}
+                      {% for i in est%}
+                      {%if emp.status_id != i.id%}
+                      <option value="{{i.id}}">{{i.status}}</option>
+                      {%endif%}
+                      {%endfor%}
+                    </select>
+                    </form>
+                    <td><a href="" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-success">+ Add new Job</a></td>
+
+                    <!-- <form method="POST">
+                      {% csrf_token %}
+                    <button type="submit" name="button1" id="button1" value="back" class="btn btn-warning"><-Back</button>
+                    </form>-->
+                    {% endif %}
+                  </tr>
+                </tbody>
+              </table>
+              {% if stg %}
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content" style="border-radius: 20px;">
+                    <form id="post-form" class="forms-sample" method="POST">
+                      {% csrf_token%}
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="">Deliverable</label>
+                          <input type="text" class="form-control" name="deli" id="deli" placeholder="Deliverable">
+                        </div>
+                        <div class="form-group">
+                          <label for="">How Measured</label>
+                          <input type="text" class="form-control" name="hm" id="hm">
+                        </div>
+                        <div class="form-group">
+                          <label for="">WGT</label>
+                          <input type="text" class="form-control" name="wgt" id="wgt">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Base</label>
+                          <input type="text" class="form-control" name="base" id="base" >
+                        </div>
+                        <div class="form-group">
+                            <label for="">Goal</label>
+                            <input type="text" class="form-control" name="goal" id="goal" >
+                        </div>
+                        <div class="form-group">
+                            <label for="">Hi/Lo</label>
+                            <input type="text" class="form-control" name="hilo" id="hilo">
+                            <input type="text" class="d-none" name="button1" id="button1" value="add">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit"class="btn btn-primary">Save and Add Task</button>
+                    </div>
+                  </form>
+                  <script type="text/javascript">
+                    $(document).on('submit', '#post-form', function (e) {
+                        e.preventDefault();
+                        $.ajax({
+                          type: "POST",
+                          url: '',
+                          data: {
+                            deli: $('#deli').val(),
+                            hm: $('#hm').val(),
+                            wgt: $('#wgt').val(),
+                            base: $('#base').val(),
+                            goal: $('#goal').val(),
+                            hilo: $('#hilo').val(),
+                            button1: $('#button1').val(),
+
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+                          },
+                        success: function () {
+                            window.location.reload()
+                        }
+                      });
+                    });
+                  </script>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal -->
+              {% endif %}
+              {% if op %}
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content" style="border-radius: 20px;">
+                    <form id="post-form" class="forms-sample" method="POST">
+                      {% csrf_token%}
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="">Job</label>
+                          <input type="text" class="form-control" name="job" id="job" placeholder="No or Name">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Task</label>
+                          <input type="text" class="form-control" name="task" id="task">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Quantity</label>
+                          <input type="text" class="form-control" name="quan" id="quan">
+                        </div>
+                        <div class="form-group">
+                          <label for="">Remark</label>
+                          <input type="text" class="form-control" name="remark" id="remark" >
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" name="button1" id="button1" value="add" class="btn btn-primary">Save and Add Task</button>
+                    </div>
+                  </form>
+                  <script type="text/javascript">
+                    $(document).on('submit', '#post-form', function (e) {
+                        e.preventDefault();
+                        $.ajax({
+                          type: "POST",
+                          url: '',
+                          data: {
+                            job: $('#job').val(),
+                            task: $('#task').val(),
+                            quan: $('#quan').val(),
+                            remark: $('#remark').val(),
+                            button1: $('#button1').val(),
+
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+                          },
+                        success: function () {
+                            window.location.reload()
+                        }
+                      });
+                    });
+                  </script>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal -->
+              {% endif %}
+
+              <div>
+                <table class="table table-hover">
+                  {% if stg %}
+                  <thead>
+                    <tr>
+                      <th> Deliverable </th>
+                      <th>How Measured </th>
+                      <th>WGT</th>
+                      <th>Base</th>
+                      <th>Goal</th>
+                      <th>Hi/Lo</th>
+                      <th>Result</th>
+                      <th>Save</th>
+                    </tr>
+                  </thead>
+                  {% for i in task %}
+                  <tbody>
+                    <form method="POST">
+                        {% csrf_token %}
+                    <tr>
+                        <input type="text" class="form-control d-none" name="id" value='{{i.id}}'>
+                      <td><input type="text" class="form-control" name="deli" value='{{i.deliv}}'></td>
+                      <td><input type="text" class="form-control" name="hm" value='{{i.howmes}}'></td>
+                      <td><input type="text" class="form-control" name="wgt" value='{{i.wgt}}'></td>
+                      <td><input type="text" class="form-control" name="base" value='{{i.base}}'></td>
+                      <td><input type="text" class="form-control" name="goal" value='{{i.goal}}'></td>
+                      <td><input type="text" class="form-control" name="hilo" value='{{i.hilo}}'></td>
+                      <td><input type="text" class="form-control" name="result" value='{{i.result}}'></td>
+                      <td><button name="button1" value="edit" class="btn btn-outline-primary" onclick="this.form.submit()">Save</button></td>
+                    </tr>
+                    </form>
+                  </tbody>
+                  {%endfor%}
+                  {%endif%}
+
+                  {% if op %}
+                  <thead>
+                    <tr>
+                      <th> Job </th>
+                      <th>Task </th>
+                      <th>Quantity</th>
+                      <th>Status</th>
+                      <th>Remark</th>
+                      <th>Save</th>
+                    </tr>
+                  </thead>
+                  {% for i in taskln %}
+                  <tbody>
+                    <form method="POST">
+                        {% csrf_token %}
+                    <tr>
+                        <input type="text" class="form-control d-none" name="id" value='{{i.id}}'>
+                      <td><input type="text" class="form-control" name="job" value='{{i.job}}'></td>
+                      <td><input type="text" class="form-control" name="task" value='{{i.tasks}}'></td>
+                      <td><input type="text" class="form-control" name="quan" value='{{i.quantity}}'></td>
+                      <td>
+                        <select class="form-control" id="status" name="status">
+                          <option value="{{i.status}}">{{i.status}}</option>
+                          {% if i.status == 'Not completed'%}
+                          <option class="text-success" value="Completed">Completed</option>
+                          {%endif%}
+                          {% if i.status == 'Completed'%}
+                          <option class="text-success" value="Not completed">Not completed</option>
+                          {%endif%}
+
+                        </select>
+                      </td>
+                      <td><input type="text" class="form-control" name="remark" value='{{i.remark}}'></td>
+                      <td><button name="button1" value="edit" class="btn btn-outline-primary" onclick="this.form.submit()">Save</button></td>
+                    </tr>
+                    </form>
+                  </tbody>
+                  {%endfor%}
+                  {%endif%}
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%endblock mainpanel%}
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+            href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.
+          All rights reserved.</span>
+        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+            class="ti-heart text-danger ml-1"></i></span>
+      </div>
+    </footer>
+    <!-- partial -->
+  </div>

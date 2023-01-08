@@ -1,0 +1,146 @@
+{%extends 'index.html'%}
+{%load static%}
+{%block mainpanel%}
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'ind' %}">
+        <i class="mdi mdi-home-variant  menu-icon"></i>
+        <span class="menu-title">Home</span>
+      </a>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Masters</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'list' %}">Employees</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'master' %}">Masters</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'thought' %}">Thoughts</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Meetings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="ui-basic1">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{% url 'strat' %}">Strategy</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'opera' %}">Operations</a></li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Employees</h4>
+            <form method="POST">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end">
+              <a href="{% url 'add' %}" class="btn btn-success">+ Add new Employee</a>
+              <button type="submit"  class="btn btn-danger ml-2">- Delete selected</button>
+            </div>
+
+            <!-- <p class="card-description">
+              Add class <code >.table</code>
+            </p> -->
+
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID No</th>
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                    <th>Select</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for emp in emps%}
+                  <tr>
+                    <td>00{{emp.id}}</td>
+                    <td>{{emp.name}}</td>
+                    <td>{{emp.details}}</td>
+                    <form method="POST" id="post-form">
+                      {% csrf_token %}
+                      <input type="text" class="d-none" id="empid" name="empid" value="{{emp.id}}">
+                      <td>
+
+                      <select onchange="this.form.submit()" id="estatus" name="estatus" class="form-control">
+                        <option value="{{emp.estatus}}">{{emp.estatus}}</option>
+                        {%if emp.estatus == 'Active'%}
+                        <option value="Inactive">Inactive</option>
+                        {%endif%}
+                        {%if emp.estatus == 'Inactive'%}
+                        <option value="Active">Active</option>
+                        {%endif%}
+                      </select>
+                    </td></form>
+                    <td>
+                      <a href="{% url 'edit' emp.id %}" class="btn btn-outline-primary"><i class="ti-pencil-alt"></i>Edit</a>
+                    </td>
+                    <td><div class="form-check">
+                      <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" type="checkbox" name="check" value="{{emp.id}}">
+                        Select
+                      </label>
+                    </div></td>
+                  </tr>
+                  {%endfor%}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endblock mainpanel%}
+  <!-- <script type="text/javascript">
+    $(document).on('submit','#post-form',function(e){
+      e.preventDefault();
+      $.ajax({
+        type:"POST",
+        url:'',
+        data:{
+          estatus:$('#estatus').val(),
+          empid:$('#empid').val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+
+        },
+        success:function(){
+
+        }
+      });
+    });
+  </script> -->
+
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
+          href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.
+        All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i
+          class="ti-heart text-danger ml-1"></i></span>
+    </div>
+  </footer>
+  <!-- partial -->
+</div>
